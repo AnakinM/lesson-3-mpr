@@ -6,10 +6,11 @@ public class Rental {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public Rental(Client client, Car car, LocalDate endDate) throws Exception {
+    public Rental(Client client, Car car, LocalDate endDate) {
         this.client = client;
         this.car = car;
         this.startDate = LocalDate.now();
+        this.endDate = endDate;
 //        if (this.startDate.isBefore(endDate))
 //            this.endDate = endDate;
 //        else

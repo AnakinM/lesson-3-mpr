@@ -1,12 +1,19 @@
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
 public class RentalService {
-    private CarStorage carStorage;
+    private final CarStorage carStorage;
+    private final RentalStorage rentalStorage;
     private final double BASE_PRICE = 20.5d;
+
+    public RentalService(CarStorage carStorage, RentalStorage rentalStorage) {
+        this.carStorage = carStorage;
+        this.rentalStorage = rentalStorage;
+    }
     // Singleton
     // void rentCar(clientId, vin, startDate, endDate)
     // boolean isAvailable(vin, startDate, endDate)
@@ -32,14 +39,33 @@ public class RentalService {
         17-22.09; 12-17.09; 17-19.09; 12-22.09;
     }
      */
+    private boolean isBetween(LocalDate periodStart, LocalDate periodEnd, LocalDate checkingDate) {
+        return checkingDate.isAfter(periodStart) && checkingDate.isBefore(periodEnd);
+    }
+
+    public boolean isAvailable(String vin, LocalDate startDate, LocalDate endDate) {
+        Car car = carStorage.getCarByVin(vin).orElseThrow();
+        List<Rental> rentalsForVin = rentalStorage.getRentalsForVin(vin);
+        if (rentalsForVin.isEmpty())
+            return true;
+
+//        for (Rental rental : rentalsForVin) {
+//            if (isBetween())
+//        }
+        return true;
+    }
+
+    public void rentCar(int clientId, String vin, LocalDate startDate, LocalDate endDate) {
+        Car car = carStorage.getCarByVin(vin).orElseThrow();
+        if (isAvailable(vin, startDate, endDate)) {
+            Rental rental = new Rental(new Client(clientId), car, endDate);
+            rentalStorage.addRental(rental);
+        }
+    }
 
     public double estimatePrice(String vin, LocalDate startDate, LocalDate endDate) {
-        Optional<Car> car = carStorage.getCarByVin(vin);
-        if (car.isPresent()) {
-            long days = DAYS.between(startDate, endDate);
-            return days * BASE_PRICE * car.get().getStandard().multiplier;
-        }
-        else
-            throw new RuntimeException("Car could not be found.");
+        Car car = carStorage.getCarByVin(vin).orElseThrow();
+        long days = DAYS.between(startDate.atStartOfDay(), endDate.atStartOfDay());
+        return days * BASE_PRICE * car.getStandard().multiplier;
     }
 }

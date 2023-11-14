@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RentalStorage {
     private static RentalStorage INSTANCE;
@@ -26,5 +27,9 @@ public class RentalStorage {
 
     public void removeRental(Rental Rental) {
         this.rentals.remove(Rental);
+    }
+
+    public List<Rental> getRentalsForVin(String vin) {
+        return rentals.stream().filter(rental -> rental.getCar().getVin().equals(vin)).toList();
     }
 }
