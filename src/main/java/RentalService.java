@@ -44,14 +44,20 @@ public class RentalService {
     }
 
     public boolean isAvailable(String vin, LocalDate startDate, LocalDate endDate) {
-        Car car = carStorage.getCarByVin(vin).orElseThrow();
+        carStorage.getCarByVin(vin).orElseThrow();
         List<Rental> rentalsForVin = rentalStorage.getRentalsForVin(vin);
-        if (rentalsForVin.isEmpty())
-            return true;
+        if (rentalsForVin.isEmpty()) return true;
 
-//        for (Rental rental : rentalsForVin) {
-//            if (isBetween())
-//        }
+        for (Rental rental : rentalsForVin) {
+            if (isBetween(rental.getStartDate(), rental.getEndDate(), startDate) ||
+            isBetween(rental.getStartDate(), rental.getEndDate(), endDate)) {
+                return false;
+            }
+            if (isBetween(startDate, endDate, rental.getStartDate())
+                    || isBetween(startDate, endDate, rental.getEndDate())) {
+                return false;
+            }
+        }
         return true;
     }
 

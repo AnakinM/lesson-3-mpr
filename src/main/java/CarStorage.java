@@ -6,7 +6,7 @@ public class CarStorage {
     private static CarStorage INSTANCE;
     private List<Car> cars = new ArrayList<>();
 
-    private CarStorage() {
+    public CarStorage() {
     }
 
     public static CarStorage getInstance() {
@@ -34,6 +34,10 @@ public class CarStorage {
 
     public void removeCar(Car car) {
         this.cars.remove(car);
+    }
+
+    public void purgeDb() {
+        this.cars.clear();
     }
 }
 
